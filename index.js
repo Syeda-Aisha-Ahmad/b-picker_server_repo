@@ -17,6 +17,7 @@ async function run() {
     try {
         const categoryCollection = client.db('b-picker').collection('categories');
         const addProductsCollection = client.db('b-picker').collection('addProducts');
+        const advertiseCollection = client.db('b-picker').collection('advertise');
 
         // Home page categories
         app.get('/categories', async (req, res) => {
@@ -33,6 +34,8 @@ async function run() {
             res.send(result);
         })
 
+
+
         //Add Products get
         app.get('/addproducts', async (req, res) => {
             const query = {};
@@ -48,6 +51,14 @@ async function run() {
             const result = await addProductsCollection.deleteOne(filter);
             res.send(result);
         })
+
+        // Advertise product post
+        app.post('/advertise', async (req, res) => {
+            const filter = req.body;
+            const result = await advertiseCollection.insertOne(filter);
+            res.send(result);
+        })
+
     }
 
     finally { }
