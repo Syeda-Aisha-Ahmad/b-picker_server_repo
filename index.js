@@ -18,6 +18,7 @@ async function run() {
         const categoryCollection = client.db('b-picker').collection('categories');
         const addProductsCollection = client.db('b-picker').collection('addProducts');
         const advertiseCollection = client.db('b-picker').collection('advertise');
+        const usersCollection = client.db('b-picker').collection('users');
 
         // Home page categories
         app.get('/categories', async (req, res) => {
@@ -34,14 +35,21 @@ async function run() {
             res.send(result);
         })
 
-
-
         //Add Products get
         app.get('/addproducts', async (req, res) => {
             const query = {};
             const cursor = addProductsCollection.find(query);
             const products = await cursor.toArray();
             res.send(products)
+        })
+
+        //Add Products get
+        app.get('/addproducts/:category', async (req, res) => {
+
+            const query = { category: "Category" }
+            const cursor = await addProductsCollection.findOne(query);
+            // const products = await cursor.toArray();
+            res.send(cursor)
         })
 
         //Delete my products
@@ -57,6 +65,29 @@ async function run() {
             const filter = req.body;
             const result = await advertiseCollection.insertOne(filter);
             res.send(result);
+        })
+
+        // Advertise product get
+        app.get('/advertise', async (req, res) => {
+            const query = {};
+            const cursor = advertiseCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products)
+        })
+
+        //Delete my products
+        app.delete('/advertise/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const result = await advertiseCollection.deleteOne(filter);
+            res.send(result);
+        })
+
+        // Save user information
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.send(result)
         })
 
     }
