@@ -123,6 +123,14 @@ async function run() {
             res.send({ isUser: user?.account === 'user' });
         })
 
+        // admin
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isAdmin: user?.account === 'admin' });
+        })
+
         app.get('/jwt', async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
