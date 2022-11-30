@@ -56,7 +56,7 @@ async function run() {
         })
 
         //Add Products get
-        app.get('/addproducts', verifyJWT, async (req, res) => {
+        app.get('/addproducts', async (req, res) => {
             // const email = req.body.email;
             const decodedEmail = req.decoded.email;
 
@@ -85,12 +85,15 @@ async function run() {
             res.send(result);
         })
 
+
+
         // Advertise product post
         app.post('/advertise', async (req, res) => {
             const filter = req.body;
             const result = await advertiseCollection.insertOne(filter);
             res.send(result);
         })
+
 
         // Advertise product get
         app.get('/advertise', async (req, res) => {
@@ -130,12 +133,28 @@ async function run() {
             res.send(allSeller)
         })
 
+        //Delete seller
+        app.delete('/users/seller/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await usersCollection.deleteOne(query);
+            res.send(result);
+        })
+
         // all Buyers
         app.get('/users/buyer', async (req, res) => {
             const query = {};
             const buyer = await usersCollection.find(query).toArray();
             const allBuyer = buyer.filter(buy => buy.account === 'buyer');
             res.send(allBuyer)
+        })
+
+        //Delete buyer
+        app.delete('/users/buyer/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await usersCollection.deleteOne(query);
+            res.send(result);
         })
 
         // User
@@ -160,6 +179,13 @@ async function run() {
             const query = { email }
             const user = await usersCollection.findOne(query);
             res.send({ isSeller: user?.account === 'seller' });
+        })
+
+        app.get('/dashboard/myproducts', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const sellerProduct = await addProductsCollection.find(query).toArray();
+            res.send(sellerProduct);
         })
 
         app.get('/jwt', async (req, res) => {
