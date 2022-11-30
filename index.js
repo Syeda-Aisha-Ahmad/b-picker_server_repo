@@ -115,12 +115,28 @@ async function run() {
             res.send(result)
         })
 
+        // Get user information
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.send(result)
+        })
+
+        // all sellers
+        app.get('/users/seller', async (req, res) => {
+            const query = {};
+            const seller = await usersCollection.find(query).toArray();
+            const allSeller = seller.filter(sell => sell.account === 'seller');
+            console.log(allSeller)
+            res.send(allSeller)
+        })
+
         // User
-        app.get('/users/user/:email', async (req, res) => {
+        app.get('/users/buyer/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email }
-            const user = await usersCollection.findOne(query);
-            res.send({ isUser: user?.account === 'user' });
+            const buyer = await usersCollection.findOne(query);
+            res.send({ isBuyer: buyer?.account === 'buyer' });
         })
 
         // admin
@@ -136,7 +152,7 @@ async function run() {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
-            res.send({ isseller: user?.account === 'seller' });
+            res.send({ isSeller: user?.account === 'seller' });
         })
 
         app.get('/jwt', async (req, res) => {
